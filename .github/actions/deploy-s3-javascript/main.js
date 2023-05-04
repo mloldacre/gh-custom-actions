@@ -3,6 +3,8 @@ const github = require('@actions/github');
 const exec = require('@actions/exec');
 
 function run() {
+	// 1) Get input values
+
 	core.notice('Hello from my custom javascript action!');
 }
 
