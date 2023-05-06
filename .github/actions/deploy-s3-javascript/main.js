@@ -7,13 +7,18 @@ function run() {
 	const bucket = core.getInput('bucket', { required: true });
 	const bucketRegion = core.getInput('bucket-region', { required: true });
 	const distFolder = core.getInput('dist-folder', { required: true });
+	const notice = 'Hello from my custom javascript action!';
 
 	// 2) Upload files
 	const s3Uri = `s3://${bucket}`;
 
 	exec.exec(`aws s3 sync ${distFolder} ${s3Uri} --region ${bucketRegion}`);
 
-	core.notice('Hello from my custom javascript action!');
+	const websiteURL = `http://${bucket}.s3-website-${bucketRegion}.amazonaws.com`;
+
+	core.setOutput('website-url', websiteURL); //::set-output
+
+	core.notice(`System Message: ${notice}`);
 }
 
 run();
