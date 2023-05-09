@@ -50,6 +50,9 @@ jobs:
           name: dist-files
           path: dist
   deploy:
+    permissions:
+      id-token: write
+      contents: read
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -62,14 +65,16 @@ jobs:
           path: ./dist
       - name: Output contents
         run: ls
+      - name: Get AWS permissions
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::804866292171:oidc-provider/token.actions.githubusercontent.com
+          aws-region: us-east-1
       - name: Deploy site
         id: site-deploy
         uses: ./.github/actions/deploy-s3-docker #can be switched to deploy-s3-javascript
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
         with:
-          bucket: gha-custom-js-action-hosting-mlo
+          bucket: gh-security-hosting-demo-mlo
           dist-folder: ./dist
       - name: Output information
         run: |
